@@ -42,11 +42,14 @@ RUN apt-get update && apt-get install -y \
 		wget \
 		zlib1g-dev \
 		htop \
-		python-numpy \
-		python-scipy \
-		python-h5py \
-		python-skimage \
-		python-matplotlib \
+		python3-numpy \
+		python3-scipy \
+		python3-h5py \
+		python3-skimage \
+		python3-matplotlib \
+		python3-setuptools \
+		python3-wheel \
+		python3-pip \
 		&& \
 	apt-get clean && \
 	apt-get autoremove
@@ -100,7 +103,7 @@ ENV TF_NEED_CUDA=0 \
     TF_MKL_ENABLED="true" \
     PYTHON_BIN_PATH="\usr\bin\python3" \
     TF_NEED_MKL=1 \
-    CC_OPT_FLAGS="-march=native" \
+    CC_OPT_FLAGS="-march=native --copt=-mavx --copt=-mavx2 --copt=-mfma --copt=-mfpmath=both --copt=-msse4.2" \
     TF_NEED_JEMALLOC=1 \
     TF_NEED_GCP=0 \
     TF_NEED_HDFS=0 \
@@ -110,4 +113,4 @@ ENV TF_NEED_CUDA=0 \
 RUN ./configure && \
     bazel build -c opt tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/pip && \
-    pip install --upgrade /tmp/pip/tensorflow-*.whl
+    pip3 install --upgrade /tmp/pip/tensorflow-*.whl
