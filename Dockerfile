@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 ARG BAZEL_VERSION=0.3.1
 ARG TENSORFLOW_VERSION=0.12.0
 
-ENV PROXY_SERVER http://proxy.wdf.sap.corp:8080
+ENV PROXY_SERVER http://proxy:8080
 ENV http_proxy $PROXY_SERVER
 ENV https_proxy $PROXY_SERVER
 ENV ftp_proxy $PROXY_SERVER
@@ -12,8 +12,8 @@ ENV HTTP_PROXY $PROXY_SERVER
 ENV HTTPS_PROXY $PROXY_SERVER
 ENV FTP_PROXY $PROXY_SERVER
 ENV ALL_PROXY $PROXY_SERVER
-ENV no_proxy *.local,169.254/16,*.sap.corp,*.corp.sap
-ENV NO_PROXY *.local,169.254/16,*.sap.corp,*.corp.sap
+ENV no_proxy *.local,169.254/16
+ENV NO_PROXY *.local,169.254/16
 
 RUN apt-get update && apt-get install -y \
 		bc \
