@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ARG BAZEL_VERSION=0.3.1
+ARG BAZEL_VERSION=0.4.2
 ARG TENSORFLOW_VERSION=0.12.0
 
 ENV PROXY_SERVER http://proxy:8080
@@ -35,13 +35,18 @@ RUN apt-get update && apt-get install -y \
 		libzmq3-dev \
 		nano \
 		pkg-config \
-		python-dev \
+		python3-dev \
 		software-properties-common \
 		unzip \
 		vim \
 		wget \
 		zlib1g-dev \
 		htop \
+		python-numpy \
+		python-scipy \
+		python-h5py \
+		python-skimage \
+		python-matplotlib \
 		&& \
 	apt-get clean && \
 	apt-get autoremove
@@ -79,6 +84,9 @@ RUN mkdir /bazel && \
 
 # Download and build TensorFlow.
 
+RUN git config --global http.proxy $http_proxy && \
+    git config --global https.proxy $https_proxy
+
 RUN git clone --recursive https://github.com/phvu/tensorflow.git && \
     cd tensorflow && \
     git checkout mkl
@@ -89,8 +97,15 @@ WORKDIR /tensorflow
 # the built directory to the path.
 
 ENV TF_NEED_CUDA=0 \
-    TF_MKL_ENABLED=true
-
+    TF_MKL_ENABLED="true" \
+    PYTHON_BIN_PATH="\usr\bin\python3" \
+    TF_NEED_MKL=1 \
+    CC_OPT_FLAGS="-march=native" \
+    TF_NEED_JEMALLOC=1 \
+    TF_NEED_GCP=0 \
+    TF_NEED_HDFS=0 \
+    TF_ENABLE_XLA=0 \
+    TF_NEED_OPENCL=0
 
 RUN ./configure && \
     bazel build -c opt tensorflow/tools/pip_package:build_pip_package && \
