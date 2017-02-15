@@ -35,13 +35,13 @@ RUN apt-get update && apt-get install -y \
 		libzmq3-dev \
 		nano \
 		pkg-config \
-		python3-dev \
 		software-properties-common \
 		unzip \
 		vim \
 		wget \
 		zlib1g-dev \
 		htop \
+		python3-dev \
 		python3-numpy \
 		python3-scipy \
 		python3-h5py \
@@ -101,7 +101,7 @@ WORKDIR /tensorflow
 
 ENV TF_NEED_CUDA=0 \
     TF_MKL_ENABLED="true" \
-    PYTHON_BIN_PATH="\usr\bin\python3" \
+    PYTHON_BIN_PATH="/usr/bin/python3" \
     TF_NEED_MKL=1 \
     CC_OPT_FLAGS="-march=native --copt=-mavx --copt=-mavx2 --copt=-mfma --copt=-mfpmath=both --copt=-msse4.2" \
     TF_NEED_JEMALLOC=1 \
