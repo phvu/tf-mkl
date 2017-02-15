@@ -101,6 +101,14 @@ WORKDIR /tensorflow
 # more difficult to experiment with local changes. Instead, just add
 # the built directory to the path.
 
+# overcome Docker's cache
+RUN git pull
+
+# HACK: we don't even install python, so need to symlink python to python3
+# Note that this is generally not recommended. In Ubuntu, python should point
+# to python2
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
 ENV TF_NEED_CUDA=0 \
     TF_MKL_ENABLED="true" \
     PYTHON_BIN_PATH="/usr/bin/python3" \
