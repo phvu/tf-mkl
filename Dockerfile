@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-ARG BAZEL_VERSION=0.4.2
+ARG BAZEL_VERSION=0.4.3
 ARG TENSORFLOW_VERSION=0.12.0
 
 ARG PROXY_SERVER=http://proxy:8080
@@ -94,27 +94,26 @@ RUN git config --global http.proxy $http_proxy && \
 
 RUN git clone --recursive https://github.com/phvu/tensorflow.git && \
     cd tensorflow && \
-    git checkout mkl
+    git checkout mkl && \
+    git pull
 WORKDIR /tensorflow
 
 # TODO(craigcitro): Don't install the pip package, since it makes it
 # more difficult to experiment with local changes. Instead, just add
 # the built directory to the path.
 
-# overcome Docker's cache
-RUN git pull
-
 # HACK: we don't even install python, so need to symlink python to python3
-# Note that this is generally not recommended. In Ubuntu, python should point
-# to python2
+# Note that this is generally not recommended.
+# In Ubuntu, python should point to python2
 RUN ln -s /usr/bin/python3 /usr/bin/python
+
+# CC_OPT_FLAGS="-march=native --copt=-mavx --copt=-mavx2 --copt=-mfma --copt=-mfpmath=both --copt=-msse4.2" \
 
 ENV TF_NEED_CUDA=0 \
     TF_MKL_ENABLED="true" \
     PYTHON_BIN_PATH="/usr/bin/python3" \
     USE_DEFAULT_PYTHON_LIB_PATH=1 \
     TF_NEED_MKL=1 \
-    CC_OPT_FLAGS="-march=native --copt=-mavx --copt=-mavx2 --copt=-mfma --copt=-mfpmath=both --copt=-msse4.2" \
     TF_NEED_JEMALLOC=1 \
     TF_NEED_GCP=0 \
     TF_NEED_HDFS=0 \
@@ -122,6 +121,10 @@ ENV TF_NEED_CUDA=0 \
     TF_NEED_OPENCL=0
 
 RUN ./configure && \
-    bazel build -c opt tensorflow/tools/pip_package:build_pip_package && \
+    bazel build -config=opt tensorflow/tools/pip_package:build_pip_package && \
     bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/pip && \
     pip3 install --upgrade /tmp/pip/tensorflow-*.whl
+
+# clear the bazel and pip cache
+RUN rm -rf /root/.cache
+
