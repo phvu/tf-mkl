@@ -104,6 +104,7 @@ WORKDIR /tensorflow
 ENV TF_NEED_CUDA=0 \
     TF_MKL_ENABLED="true" \
     PYTHON_BIN_PATH="/usr/bin/python3" \
+    USE_DEFAULT_PYTHON_LIB_PATH=1 \
     TF_NEED_MKL=1 \
     CC_OPT_FLAGS="-march=native --copt=-mavx --copt=-mavx2 --copt=-mfma --copt=-mfpmath=both --copt=-msse4.2" \
     TF_NEED_JEMALLOC=1 \
